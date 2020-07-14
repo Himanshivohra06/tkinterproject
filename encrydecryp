@@ -1,0 +1,146 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jul  8 13:32:21 2020
+
+@author: Himanshi
+"""
+
+
+from tkinter import*
+
+import random
+import time
+import datetime
+
+# creating root object
+root = Tk()
+
+root.geometry("1200x1000") 
+root.title("Message coding and encoding")
+root.configure(bg = 'black')
+ 
+# setting the frames 
+Top = Frame(root , width = 1600 , relief = "groove" , background = "blue")
+Top.pack(side = TOP)
+
+f1 = Frame(root , width = 1600 , relief = "raised" , height = 600)
+f1.pack(side= LEFT)
+f1.configure(bg = "black")
+
+#setting labels and position
+lblInfo = Label(Top, font = ('helvetica' , 40 , 'bold') , text = "Secret Messaging" , background = "black" , fg = "white" , bd = 8 , anchor = 'w')
+lblInfo.grid(row = 0 , column = 0)
+
+#creating string variables
+rand  = StringVar()
+Msg = StringVar()
+key = StringVar()
+mode = StringVar()
+Result = StringVar()
+
+# exit function 
+def qExit():
+    root.destroy()
+    
+def Reset():
+    rand.set("")
+    Msg.set("")
+    key.set("")
+    mode.set("")
+    Result.set("")
+    
+
+# seting reference 
+lblReference = Label(f1, font = ('arial', 14, 'bold'), background="black" ,fg="white",
+                text = "Name:", bd = 14, anchor = "w") 
+                  
+lblReference.grid(row = 0, column = 0) 
+  
+#input Box
+txtReference = Entry(f1, font = ('arial', 14, 'bold'), 
+               textvariable = rand, bd = 8, 
+                        bg = "LemonChiffon", justify = 'right') 
+                          
+txtReference.grid(row = 0, column = 1) 
+
+
+#labels
+IM = Label(f1 , font = ('ariel' , 14 , 'bold') , background = 'black' , fg = 'white' , text = 'Message :' , bd = 14 , anchor = 'w')
+IM.grid(row = 1 , column = 0)
+
+tm = Entry(f1 , font = ('ariel' , 14 , 'bold'), textvariable = Msg , bd = 8,bg = "LemonChiffon" , justify = 'right')
+tm.grid(row = 1 , column = 1)
+
+IK = Label(f1 , font = ('ariel' , 14 , 'bold') , background = 'black' , fg = 'white' , text = 'Key :' , bd = 14 , anchor = 'w')
+IK.grid(row = 2 , column = 0)
+
+tk = Entry(f1 , font = ('ariel' , 14 , 'bold'), textvariable = key , bd = 8, insertwidth = 3,bg = "LemonChiffon" , justify = 'right')
+tk.grid(row = 2 , column = 1)
+
+IO = Label(f1 , font = ('ariel' , 14 , 'bold') , background = 'black' , fg = 'white' , text = 'MODE (e for encrpt , d for decrypt )' , bd = 14 , anchor = 'w')
+IO.grid(row = 3 , column = 0)
+
+to = Entry(f1 , font = ('ariel' , 14 , 'bold'), textvariable = mode , bd = 8 , insertwidth = 3,bg = "LemonChiffon" , justify = 'right')
+to.grid(row = 3 , column = 1)
+
+IS = Label(f1 , font = ('ariel' , 14 , 'bold') , background = 'black' , fg = 'white' , text = 'The Result -' , bd = 14 , anchor = 'w')
+IS.grid(row = 2 , column = 2)
+
+ts = Entry(f1 , font = ('ariel' , 14 , 'bold'), textvariable = Result , bd = 8 , insertwidth = 4,bg = "LemonChiffon" , justify = 'right')
+ts.grid(row = 2 , column = 3)
+
+#cipher 
+import base64 
+
+def encode(key, clear): 
+    enc = [] 
+      
+    for i in range(len(clear)): 
+        key_c = key[i % len(key)] 
+        enc_c = chr((ord(clear[i]) +
+                     ord(key_c)) % 256) 
+                       
+        enc.append(enc_c) 
+          
+    return base64.urlsafe_b64encode("".join(enc).encode()).decode() 
+  
+# Function to decode 
+def decode(key, enc): 
+    dec = [] 
+      #base64.urlsafe_b64decode() is function in python library (base64)
+    enc = base64.urlsafe_b64decode(enc).decode() 
+    for i in range(len(enc)): 
+        key_c = key[i % len(key)] 
+        dec_c = chr((256 + ord(enc[i]) -
+                           ord(key_c)) % 256) 
+                             
+        dec.append(dec_c) 
+    return "".join(dec) 
+  
+# fetching values 
+        
+def Ref():
+    print("Message= ", (Msg.get())) 
+    clear = Msg.get() 
+    k = key.get() 
+    m = mode.get() 
+    
+    if(m == 'e'):
+        Result.set(encode(k , clear))
+    else:
+        Result.set(decode(k , clear))
+        
+# define buttons 
+
+#submit 
+
+btotal = Button(f1 , padx = 18 , pady = 10,bd = 16, fg = "black" , font = ('ariel', 16 , 'bold') , width = 10 , text= 'Submit' , bg = "Gold", command = Ref).grid(row = 12, column = 1 )
+
+#reset 
+breset = Button(f1 , padx = 18 , pady = 10,bd = 16, fg = "black" , font = ('ariel', 16 , 'bold') , width = 10 , text= 'Reset' , bg = "DarkSeagreen", command = Reset).grid(row = 12, column = 2 )
+
+#exit button
+bexit = Button(f1 , padx = 18 , pady = 10,bd = 16, fg = "black" , font = ('ariel', 16 , 'bold') , width = 10 , text= 'Exit' , bg = "IndianRed", command = qExit).grid(row = 12, column = 3 )
+
+
+root.mainloop()
